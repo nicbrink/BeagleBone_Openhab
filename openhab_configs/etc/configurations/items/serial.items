@@ -1,0 +1,6 @@
+//Based upon code from the MySensor forum
+//http://forum.mysensors.org/topic/655/serial-gateway-connection-to-openhab/3
+
+Group All 
+
+String Moteino "MySensors" { serial="/dev/ttyO4" }

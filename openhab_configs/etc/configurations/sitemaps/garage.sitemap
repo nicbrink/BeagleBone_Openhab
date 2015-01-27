@@ -1,0 +1,15 @@
+sitemap garage label="Main Menu" {
+	
+	Frame label="GarageShop" {
+		Text item=GarageShopLastUpdated
+		Text item=GarageShopTemp
+		Text item=GarageShopHum 
+	}
+	 Frame {
+                Switch item=Garage_Chart_Period label="Chart Period" mappings=[0="Hour", 1="Day", 2="Week"]
+                Chart item=GarageShop period=h refresh=6000 visibility=[Garage_Chart_Period==0, Garage_Chart_Period=="Uninitialized"]
+                Chart item=GarageShop period=D refresh=30000 visibility=[Garage_Chart_Period==1]
+                Chart item=GarageShop period=W refresh=30000 visibility=[Garage_Chart_Period==2]
+         }
+
+}

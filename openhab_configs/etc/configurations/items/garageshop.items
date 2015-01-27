@@ -1,0 +1,9 @@
+Group GarageShop
+
+Number GarageShopTemp "Temperature [%.1f &#176;F]" <temperature> (GarageShop) 
+Number GarageShopHum "Humidity [%s %%]" <temperature> (GarageShop)
+Number Garage_Chart_Period "Chart Period"
+DateTime GarageShopLastUpdated "GarageShopMoteino Last Updated at [%1$tA, %1$tm/%1$td/%1$tY %1$tT]" <clock>
+
+
+

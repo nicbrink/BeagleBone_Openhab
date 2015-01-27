@@ -1,0 +1,64 @@
+//Based upon MySensors Post
+//http://forum.mysensors.org/topic/655/serial-gateway-connection-to-openhab/3
+
+//Number GarageShopTemp "Temperature [%.1f &#176;F" <temperature> (GarageShop)
+//Number GarageShopHum "Humidity [%s %%]" <temperature> (GarageShop)
+//DateTime GarageShopLastUpdated   "Sensor 1 Changed at [%1$tA, %1$td.%1$tm.%1$tY %1$tT]"
+
+import org.openhab.core.library.types.* 
+import org.openhab.core.persistence.* 
+import org.openhab.model.script.actions.* 
+
+var String GarageShopNode = "5"
+var String GarageShopTempSensor = "1"
+var String GarageShopHumSensor = "0"
+
+//MySensors Serial API message format
+var String[] messages
+var String[] message
+var Integer nodeid
+var Integer childsensorid
+var Integer messagetype
+var Integer ack
+var Integer subtype
+var String payload
+
+rule "Moteino sends to Openhab"
+	when
+		Item Moteino received update
+	then
+		if(Moteino.state.toString.trim.startsWith(GarageShopNode + ";")) {
+		//only parse the message if it is for our Node
+		//sometime we end up with multiple messages in one string, split and act on all
+		messages = Moteino.state.toString.split("\n");
+		for (s : messages) {	//for each message loop
+			logDebug("Garage",s);
+			message = s.split(";");
+
+			nodeid = message.get(0);
+			childsensorid = message.get(1);
+                        messagetype = message.get(2);
+                        ack = message.get(3);
+                        subtype = message.get(4);
+                        payload = message.get(5);
+       			//logInfo("Garage",payload);
+
+			// ShopTemp  //childsensorid = 1 in our case, so parse out out payload as a temp
+			if(childsensorid == GarageShopTempSensor) {
+				var Number myTemperature = 0.0f
+				myTemperature = Float::parseFloat(payload)
+				postUpdate(GarageShopTemp, myTemperature)
+			}
+			
+			// ShopHumidity
+			 if(childsensorid == GarageShopHumSensor) {
+				var Number myHumidity = 0.0f;
+				myHumidity = Float::parseFloat(payload)
+				postUpdate(GarageShopHum, myHumidity)
+			}
+		
+		//update the time this sensor was updated
+		postUpdate(GarageShopLastUpdated, new DateTimeType())
+		}
+	end 
+
